@@ -74,7 +74,7 @@ export function getForm(req) {
 
 export function submit(req) {
   const obj = req.body;
-  return new Promise(resolve=> {
+  return new Promise((resolve, reject)=> {
     fetch(`http://ks.gdycjy.gov.cn/kQuestion.shtml?act=patchcaValidate&patchcafield=${obj.patchcafield}`, {
       method: 'post',
       credentials: 'include',
@@ -95,7 +95,10 @@ export function submit(req) {
           return res.json();
         })
         .then(json => {
-          console.log(json)
+          if (!json.success) {
+            reject(json);
+            return false;
+          }
           fetch(`http://ks.gdycjy.gov.cn/kQuestion.shtml?act=startAnswerQuestion&uuid=${json.msg}`, {
             method: 'get',
             credentials: 'include',
